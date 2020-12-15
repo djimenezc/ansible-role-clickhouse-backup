@@ -4,7 +4,7 @@
 # it comes from ansible XML register
 backup_name=`date -u +%Y-%m-%d`-{{ item.name }}-{{ clickhouse_shard_name.matches[0].shard }}
 
-backup_list=${clickhouse-backup list local}
+backup_list=$(clickhouse-backup list local)
 
 # Upload full backup when there are none and every midnight
 if [[ ${backup_list} == "no backups found" || "{{ item.incremental }}" == "False" ]]
@@ -15,11 +15,11 @@ then
   echo "Upload $backup_name backup..."
   clickhouse-backup -c {{ clickhouse_backup_config_dir }}/config-{{ item.name }}.yml upload $backup_name
 else
-  latest=${clickhouse-backup list local latest}
+  latest=$(clickhouse-backup list local latest)
 
   echo "Create $backup_name local backup..."
   clickhouse-backup -c {{ clickhouse_backup_config_dir }}/config-{{ item.name }}.yml create $backup_name
 
   echo "Upload $backup_name full backup..."
-  clickhouse-backup -c {{ clickhouse_backup_config_dir }}/config-{{ item.name }}.yml upload --diff-from $latest $backup_name
+  clickhouse-backup -c {{ clickhouse_backup_config_dir }}/config-{{ item.name }}.yml upload --diff-from ${latest} $backup_name
 fi
