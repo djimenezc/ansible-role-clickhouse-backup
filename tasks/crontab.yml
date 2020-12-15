@@ -17,7 +17,7 @@
     owner: root
     group: root
     mode: '0775'
-  loop: "{{ clickhouse_backup_policy }}"
+  loop: "{{ clickhouse_backup_policy_list }}"
 
 - name: Set default state for clickhouse-backup cron file
   set_fact:
@@ -39,4 +39,4 @@
     job: "/usr/local/bin/cronjob-clickhouse-backup-{{ item.name }}.sh"
     cron_file: "clickhouse-backup-{{ item.name }}"
     state: "{{ clickhouse_backup_crontab_state }}"
-  loop: "{{ clickhouse_backup_policy }}"
+  loop: "{{ clickhouse_backup_policy_list }}"

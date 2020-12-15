@@ -9,9 +9,22 @@ clickhouse_backup_config_dir: /etc/clickhouse-backup
 ####################################
 clickhouse_backup_general_remote_storage: s3
 clickhouse_backup_general_disable_progress_bar: false
-clickhouse_backup_general_backups_to_keep_local: 1
-clickhouse_backup_general_backups_to_keep_remote_incremental: 7
-clickhouse_backup_general_backups_to_keep_remote_full: 4
+
+clickhouse_backup_install_crontab: true
+
+clickhouse_backup_policy_list:
+  - { name: "incremental",
+      day: "*",
+      hour: "*/2",
+      minute: "30",
+      incremental: true
+    }
+  - { name: "full",
+      day: "*",
+      hour: "1",
+      minute: "30",
+      incremental: false
+    }
 
 ###############################################
 # Clickhouse related clickhouse-backup settings
@@ -22,8 +35,7 @@ clickhouse_backup_clickhouse_password: "{{ clickhouse_backup_clickhouse_db_url |
 clickhouse_backup_clickhouse_host: "{{ clickhouse_backup_clickhouse_db_url | urlsplit('hostname') | default('localhost', true) }}"
 clickhouse_backup_clickhouse_port: "{{ clickhouse_backup_clickhouse_db_url | urlsplit('port') | default(9000, true) }}"
 clickhouse_backup_clickhouse_data_path: ""
-clickhouse_backup_clickhouse_skip_tables:
-  - system.*
+clickhouse_backup_clickhouse_skip_tables: ["system.*"]
 clickhouse_backup_clickhouse_timeout: 5m
 clickhouse_backup_clickhouse_freeze_by_part: false
 
@@ -66,27 +78,3 @@ clickhouse_backup_cos_path: ""
 clickhouse_backup_cos_compression_format: gzip
 clickhouse_backup_cos_compression_level: 1
 clickhouse_backup_cos_debug: false
-
-clickhouse_backup_install_crontab: true
-clickhouse_backup_cron_month: "*"
-clickhouse_backup_cron_day: "*"
-clickhouse_backup_cron_weekday: "*"
-clickhouse_backup_cron_minute: 0
-clickhouse_backup_cron_hour: 2
-
-
-clickhouse_backup_policy:
-  - { name: "incremental",
-#      special_time: "",
-      day: "*",
-      hour: "*/2",
-      minute: "30",
-      incremental: true
-      }
-  - { name: "full",
-#      special_time: "",
-      day: "*",
-      hour: "1",
-      minute: "30",
-      incremental: false
-      }
