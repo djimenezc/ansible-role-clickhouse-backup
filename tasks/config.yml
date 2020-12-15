@@ -1,6 +1,7 @@
 ---
 # it is necessary for using community.general.xml module
 # https://docs.ansible.com/ansible/latest/collections/community/general/xml_module.html
+
 - name: Install PIP
   yum: name=python-pip state=present
 
