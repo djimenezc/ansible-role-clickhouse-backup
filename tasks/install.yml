@@ -1,4 +1,7 @@
 ---
 - name: Install release package
-  apt:
-    deb: https://github.com/AlexAkulov/clickhouse-backup/releases/download/v{{ clickhouse_backup_version }}/clickhouse-backup_{{ clickhouse_backup_version }}_amd64.deb
+  yum:
+    name: https://github.com/AlexAkulov/clickhouse-backup/releases/download/v{{ clickhouse_backup_version }}/clickhouse-backup-{{ clickhouse_backup_version }}-1.x86_64.rpm
+
+
+

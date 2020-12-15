@@ -1,15 +1,23 @@
 ---
+- name: Get shard name
+  community.general.xml:
+    path: /etc/clickhouse-server/config.d/macros.xml
+    xpath: /yandex/macros/shard
+    content: text
+  register: clickhouse_shard_name
+
+- name: print clickhouse_shard_name
+  debug:
+    msg: "clickhouse_shard_name: {{ clickhouse_shard_name.matches[0].shard }}"
+
 - name: Create clickhouse-backup cronjob bash script
   template:
     src: cronjob-clickhouse-backup.sh.j2
-    dest: "/usr/local/bin/cronjob-clickhouse-backup-{{ item }}.sh"
+    dest: "/usr/local/bin/cronjob-clickhouse-backup-{{ item.name }}.sh"
     owner: root
     group: root
     mode: '0775'
-  loop:
-    - daily
-    - weekly
-    - monthly
+  loop: "{{ clickhouse_backup_policy }}"
 
 - name: Set default state for clickhouse-backup cron file
   set_fact:
@@ -23,12 +31,12 @@
 - name: Creates/remove cron file under /etc/cron.d
   cron:
     name: Add cronjob for clickhouse backup
-    special_time: "{{ item }}"
+#    special_time: "{{ item.special_time }}"
+    day: "{{ item.day }}"
+    hour: "{{ item.hour }}"
+    minute: "{{ item.minute }}"
     user: root
-    job: "/usr/local/bin/cronjob-clickhouse-backup-{{ item }}.sh"
-    cron_file: "clickhouse-backup-{{ item }}"
+    job: "/usr/local/bin/cronjob-clickhouse-backup-{{ item.name }}.sh"
+    cron_file: "clickhouse-backup-{{ item.name }}"
     state: "{{ clickhouse_backup_crontab_state }}"
-  loop:
-    - daily
-    - weekly
-    - monthly
+  loop: "{{ clickhouse_backup_policy }}"

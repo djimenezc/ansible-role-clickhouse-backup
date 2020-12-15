@@ -1,12 +1,18 @@
 ---
+# it is necessary for using community.general.xml module
+# https://docs.ansible.com/ansible/latest/collections/community/general/xml_module.html
+- name: Install PIP
+  yum: name=python-pip state=present
+
+- name: Install lxml
+  pip: name=lxml
+
 - name: Create clickhouse-backup configuration file
   template:
     src: config.yml.j2
-    dest: "{{ clickhouse_backup_config_dir }}/config-{{ item }}.yml"
+    dest: "{{ clickhouse_backup_config_dir }}/config-{{ item.name }}.yml"
     owner: root
     group: root
     mode: '0664'
-  loop:
-    - daily
-    - weekly
-    - monthly
+  loop: "{{ clickhouse_backup_policy }}"
+
